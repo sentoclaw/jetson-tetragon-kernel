@@ -49,6 +49,14 @@ With no pahole on the build host, `CONFIG_PAHOLE_VERSION=0`, `PAHOLE_HAS_SPLIT_B
 
 Override means "the function will never be executed and, instead, a value (typically an error) will be returned to the caller." Signal kills the process, and Tetragon's own documentation states that "sending a `SIGKILL` signal does not always stop the operation being performed by the process." Their recommendation is to pair the two. See <https://tetragon.io/docs/concepts/enforcement/> and the kernel configuration list at <https://tetragon.io/docs/installation/faq/>.
 
+**1.7 The BTFIDS unresolved-symbol failure is reported on the 5.10 line, from L4T 35.1 through JetPack 5.13.**
+
+- [L4T 35.1 / kernel 5.10.104, posted 2022-10-04](https://forums.developer.nvidia.com/t/jetson-35-1-linux-build-will-fail-if-config-debug-info-btf-y/229809): `BTFIDS vmlinux` / `FAILED unresolved symbol netlink_sock`. Reporter: an upstream 5.10.104 and the same tree with NVIDIA's patches removed both built. Thread is open. No official NVIDIA answer.
+- [JetPack 5.1.2 / kernel 5.10.120, posted 2025-06-03](https://forums.developer.nvidia.com/t/nvidia-jetpack5-1-2-linux-5-10-120-build-will-fail-if-config-debug-info-btf-y/335094): same class (`tcp6_sock`, then `udp6_sock` after applying a `netlink_sock` BTF_ID). Closed.
+- [JetPack 5.13, Orin NX 16G, posted 2025-08-26](https://forums.developer.nvidia.com/t/orinnx-enable-config-debug-info-btf-y-and-build-kernel-error/343156): `FAILED unresolved symbol netlink_sock`. NVIDIA staff (ShaneCCC) supplied: add `BTF_ID(struct, netlink_sock)` in `kernel/kernel-5.10/net/netlink/af_netlink.c`. Reporter: "thanks for your solution, I solved it." Closed, accepted answer.
+
+All three reports are on kernel 5.10. Our builds are 5.15.185 and 6.8.12. See 2.2 and 3.2.
+
 ---
 
 ## 2. Observed on our hardware
@@ -65,7 +73,7 @@ Measured by diffing the stock expanded config, recovered with `scripts/extract-i
 
 On 5.15 and again on 6.8, with the toolchain above. `readelf -S vmlinux` shows `.BTF` and `.BTF_ids` in both. `IGNORE_BTF_ERRORS=1` was never set. The running 5.15 kernel exposes `/sys/kernel/btf/vmlinux` at 7,154,354 bytes.
 
-Scope: two builds, these tool versions, this board. Read 3.2 before drawing a conclusion from it.
+Scope: two builds, these tool versions, this board. The reported history of the same error class is 1.7, and it is all on 5.10. Read 3.2 before drawing a conclusion from it.
 
 **2.3 The GPU stack survives.**
 

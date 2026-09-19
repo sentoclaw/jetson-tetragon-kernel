@@ -38,11 +38,11 @@ Diagnosed over serial with SSH dead.
 
 **Search for:** `BTFIDS vmlinux FAILED unresolved symbol netlink_sock` (or `tcp6_sock`)
 
-**Cause (as published):** We went in expecting to hit this.
+**Cause (as published):** Reported on the 5.10 line from L4T 35.1 (2022-10-04, [`netlink_sock`](https://forums.developer.nvidia.com/t/jetson-35-1-linux-build-will-fail-if-config-debug-info-btf-y/229809); thread open, no official NVIDIA answer) through JetPack 5.13 (2025-08-26, Orin NX 16G, same error). A June 2025 JetPack 5.1.2 / 5.10.120 report is the same class ([`tcp6_sock` / `udp6_sock`](https://forums.developer.nvidia.com/t/nvidia-jetpack5-1-2-linux-5-10-120-build-will-fail-if-config-debug-info-btf-y/335094)).
 
-**This rebuild:** BTF generation completed without that patch, with pahole v1.25 and gcc 11.4.0. `/sys/kernel/btf/vmlinux` was present (7154354 bytes).
+**Fix (5.10, as supplied by NVIDIA staff in the August 2025 thread):** add `BTF_ID(struct, netlink_sock)` in `kernel/kernel-5.10/net/netlink/af_netlink.c`. Source: <https://forums.developer.nvidia.com/t/orinnx-enable-config-debug-info-btf-y-and-build-kernel-error/343156>. That is a 5.10 instruction.
 
-Do not treat that as a fix. Do not assert a root cause. Do not set `IGNORE_BTF_ERRORS=1` — that skips BTF generation.
+**This rebuild (5.15 and 6.8):** BTF generation completed without that patch, with pahole v1.25, gcc 11.4.0, and GNU ld 2.38, building natively. `/sys/kernel/btf/vmlinux` was present on the running 5.15 kernel (7154354 bytes). Scope is those two builds. Do not treat that as a fix. Do not assert a root cause. Do not set `IGNORE_BTF_ERRORS=1` — that skips BTF generation.
 
 ## Clock in the past
 
