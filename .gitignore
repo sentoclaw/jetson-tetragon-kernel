@@ -1,0 +1,8 @@
+*.o
+*.ko
+*.mod*
+.config*
+vmlinux
+Image
+tmp/
+build/

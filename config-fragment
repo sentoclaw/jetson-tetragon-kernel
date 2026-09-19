@@ -1,0 +1,26 @@
+# JP6 / L4T R36.x / kernel 5.15 — measured config delta from a stock R36.5
+# L4T kernel (expanded config vs the rebuilt kernel's expanded config).
+# Five symbols changed. Transcribed from the Phase A measurement — do not
+# re-derive. Built and booted on an AGX Orin developer kit (JetPack 6).
+# apply-config.sh applies these five.
+#
+# CONFIG_DEBUG_INFO_REDUCED is disabled explicitly because
+# CONFIG_DEBUG_INFO_BTF depends on !CONFIG_DEBUG_INFO_REDUCED. Letting
+# olddefconfig drop it is invisible to a reader and must not be relied on.
+#
+# Not operations on JP6 stock (measured no-op): CONFIG_DEBUG_INFO (already y),
+# CONFIG_LOCALVERSION_AUTO (already unset), CONFIG_BPF_LSM (unset both sides).
+#
+# CONFIG_LOCALVERSION is the repaired pin. A value matching stock produces
+# a colliding module path and overwrites the fallback tree.
+
+CONFIG_KPROBES=y
+# CONFIG_DEBUG_INFO_REDUCED is not set
+CONFIG_DEBUG_INFO_BTF=y
+CONFIG_DEBUG_INFO_BTF_MODULES=y
+CONFIG_LOCALVERSION="-tegra-tetragon"
+
+# JP7 / L4T R39.2.1 / kernel 6.8 live assignments are in config-fragment.jp7
+# so they do not last-win over the JP6 five above.
+# 007 laptop (pahole absent): BTF_MODULES did not land.
+# 008 AGX (pahole v1.25): BTF_MODULES landed; Image+modules built; not booted.

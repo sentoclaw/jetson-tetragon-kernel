@@ -1,0 +1,20 @@
+# JP7 / L4T R39.2.1 / kernel 6.8 — AGX native olddefconfig + Image build
+# (008). Seed arch/arm64/configs/defconfig, apply the JP6 five, disable
+# LOCALVERSION_AUTO, `make ARCH=arm64 olddefconfig`. Host: AGX gcc 11.4.0,
+# pahole v1.25, CONFIG_PAHOLE_VERSION=125.
+# Built: Image + modules. Not flashed. Not booted.
+#
+# Differs from config-fragment (JP6): CONFIG_DEBUG_INFO is a written =y
+# (absent in the 6.8 defconfig; DWARF choice stayed toolchain-default).
+# CONFIG_DEBUG_INFO_BTF_MODULES landed on this pahole-present host.
+#
+# 007 laptop run (pahole absent, CONFIG_PAHOLE_VERSION=0) did not land
+# BTF_MODULES. That result is superseded here for the BTF_MODULES question.
+
+CONFIG_KPROBES=y
+# CONFIG_DEBUG_INFO_REDUCED is not set
+CONFIG_DEBUG_INFO_BTF=y
+CONFIG_DEBUG_INFO_BTF_MODULES=y
+CONFIG_DEBUG_INFO=y
+CONFIG_LOCALVERSION="-tegra-tetragon"
+# CONFIG_LOCALVERSION_AUTO is not set

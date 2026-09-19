@@ -1,0 +1,30 @@
+# JP6 / L4T R36.x / kernel 5.15 — enforce profile (opt-in).
+#
+# This profile enables Tetragon's Override action. Override works by
+# letting BPF change kernel function return values, which is a capability
+# the board did not previously have. Using it requires CAP_BPF or root,
+# so it does not create a new way in, but it widens what an attacker
+# already inside can do. The observe profile (config-fragment) is the
+# default recommendation; this one is opt-in.
+#
+# CONFIG_LOCALVERSION is "-tegra-tetragon-enforce" so this kernel can be
+# installed beside the observe kernel and stock, all still bootable.
+# Stock is CONFIG_LOCALVERSION="". Do not reuse a suffix already installed.
+#
+# Transcribed from a 5.15 build: both new symbols resolved to y; BTF and
+# BTF_MODULES stayed y. Image and modules were built and BTF-verified.
+# NOT booted. Override NOT yet demonstrated at runtime.
+#
+# The five observe symbols plus:
+#   CONFIG_FUNCTION_ERROR_INJECTION=y
+#   CONFIG_BPF_KPROBE_OVERRIDE=y
+# apply-config.sh still applies only the observe five. Add these two and
+# the enforce LOCALVERSION yourself, then olddefconfig.
+
+CONFIG_KPROBES=y
+# CONFIG_DEBUG_INFO_REDUCED is not set
+CONFIG_DEBUG_INFO_BTF=y
+CONFIG_DEBUG_INFO_BTF_MODULES=y
+CONFIG_FUNCTION_ERROR_INJECTION=y
+CONFIG_BPF_KPROBE_OVERRIDE=y
+CONFIG_LOCALVERSION="-tegra-tetragon-enforce"
